@@ -23,6 +23,7 @@ Rails.application.routes.draw do
       get 'update_to', to: "service_centers#update_to"
     end
   end
+  get 'order/:id/:service_id',to: "clients#order_cancel",as: :order_cancel
   get 'client_request/:id', to: 'service_centers#client_request',as: :client_request
   get 'add_service/:id', to: 'service_centers#add_service', as: :add_service
   get 'request_to_owner/:id', to:'service_centers#request_to_owner',as: :request_to_owner

@@ -5,19 +5,34 @@
     <% @data.each do |i| %>
       <div class="row">
         <div class="col-3 shadow-lg p-3 mb-5 bg-body rounded col-4">
-          <%=i.name%> <br>
-          <%=i.vehicle_number%> <br>
-          <%=i.contact_number%> <br>
-          <%=i.category%> <br>
-          <%=i.status%> <br>
-          <%=i.request_date%> <br>
-          <%=i.request_time%> <br>
-          <%= button_to "confirm" ,order_confirmation_path(i), method: :post, class: 'btn-primary' %> 
+               <div class="row">
+                         <div class="col-6">
+                              Name: <br>
+                              vehicle_number <br>
+                              contact_number <br>
+                              Categoty <br>
+                              Status <br>
+                              request_date <br>
+                              request_time  
+                         </div>     
+
+                         <div class="col-6">
+                          <%=i.name%> <br>
+                          <%=i.vehicle_number%> <br>
+                          <%=i.contact_number%> <br>
+                          <%=i.category%> <br>
+                          <%=i.status%> <br>
+                          <%=i.request_date%> <br>
+                          <%=i.request_time%> <br>
+                          <%= button_to "confirm" ,order_confirmation_path(i), method: :post, class: 'btn-primary' %> 
+                         </div>
+                 
+               </div>
         </div>
         <div class="col-1">
 
         </div>
-        <div class="col-4 shadow-lg p-3 mb-5 bg-body rounded">
+        <div class="col-6 shadow-lg p-3 mb-5 bg-body rounded">
         
 
                   <%= form_with model:i ,method: :post,url:order_pending_service_centers_path do |form| %>
@@ -60,7 +75,7 @@
 
                   <div class="mt-2">
                     <%= form.label :confirm_time%><br>
-                    <%= form.time_field :confirm_time, class: "form-control form-control-lg"%>
+                    <%= form.text_field :confirm_time, class: "form-control form-control-lg"%>
                   </div>
 
 
@@ -78,7 +93,7 @@
             
                   <div class="mt-2">
                     <%= form.label :another_request_time%><br>
-                    <%= form.time_field :another_request_time, class: "form-control form-control-lg"%>
+                    <%= form.text_field :another_request_time, class: "form-control form-control-lg"%>
                   </div>
 
 
@@ -91,7 +106,9 @@
                   </div>
 
                   <%end%>
-
+                  <div style="margin-top: -36px;">
+                    <%= link_to "Cancel",order_cancel_path(i.id,i.service_center_id), class:"btn btn-danger"%>
+                  </div>
 
 
         </div>

@@ -4,6 +4,14 @@ class ClientsController < ApplicationController
     def index
     end     
 
+
+    def order_cancel
+        @client = Client.find(params[:id])
+        @service = ServiceCenter.find(params[:service_id])
+        @user = User.find(@client.user_id)
+        UserMailer.with(email: @user.email,service:@service).order_cancel_mail.deliver_later
+    end 
+
     def show_data
         @d = Client.find(params[:id])
         @data  = CategoryList.find_by(name:@d.category)

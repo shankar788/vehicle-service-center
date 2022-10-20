@@ -3,7 +3,6 @@ module Shop
    
                  
         def request(params,id)
-          
           @request_id = ServiceCenter.find(params[:id])
           @a = @request_id.clients.find_by(request_date:params[:request_date].split("-").reverse.join(" "))
           @client = @request_id.clients.find_by(vehicle_number:params[:vehicle_number])
@@ -16,17 +15,9 @@ module Shop
               redirect_to client_request_path(@client.service_center_id)
             end  
           elsif true
-            if @a
-              if params[:request_time][0,2].to_i >  @a.another_request_time[0,2].to_i
-                @request_id.clients.create(name:params[:name],vehicle_number:params[:vehicle_number],contact_number:params[:contact_number],user_id:id,category:@cat.name,cost:@cat.cost,request_time:params[:request_time].upcase,request_date:params[:request_date].split("-").reverse.join(" "),category_time:@cat.time)
-              else
-                raise "Already booked Choose another time"
-              end  
-            else 
-              @request_id.clients.create(name:params[:name],vehicle_number:params[:vehicle_number],contact_number:params[:contact_number],user_id:id,category:@cat.name,cost:@cat.cost,request_time:params[:request_time].upcase,request_date:params[:request_date].split("-").reverse.join(" "),category_time:@cat.time)
-            end  
-          else
-          end 
+            @request_id.clients.create!(name:params[:name],vehicle_number:params[:vehicle_number],contact_number:params[:contact_number],user_id:id,category:@cat.name,cost:@cat.cost,request_time:params[:request_time].upcase,request_date:params[:request_date],category_time:@cat.time)
+          end  
+     
         end  
 
 
@@ -45,11 +36,11 @@ module Shop
             else
               @next_date = next_service(@data.confirm_date,@data)
               @data.update(status:"booked",confirm_slot:@slots.name)
-              UserMailer.with(email: @user.email).order_mail.deliver_later
+              UserMailer.with(email: @user.email,service:@service).order_mail.deliver_later
             end     
-            else
+          else
       
-            end    
+          end    
         end 
         
         def payment_gate_way(params,user)
@@ -89,11 +80,28 @@ module Shop
             client.update(next_date:t)
           end  
         end 
+         
+     
+        # if @a
+        #   if params[:request_time][0,2].to_i >  @a.another_request_time[0,2].to_i
+        #     @request_id.clients.create(name:params[:name],vehicle_number:params[:vehicle_number],contact_number:params[:contact_number],user_id:id,category:@cat.name,cost:@cat.cost,request_time:params[:request_time].upcase,request_date:params[:request_date].split("-").reverse.join(" "),category_time:@cat.time)
+        #   else
+        #     raise "Already booked Choose another time"
+        #   end 
+
 
         def pending_order_for_date(params)
           @client = Client.find_by(name:params[:client][:name]) 
-          if @client.alloted_slot.present? && @client.another_request_time?
-            
+          if @client
+            if @client.alloted_slot.present?
+              if params[:client][:request_time][0,2].to_i >  @client.another_request_time[0,2].to_i
+                @client.update(confirm_time:params[:client][:confirm_time],confirm_date:params[:client][:confirm_date],alloted_slot:params[:client][:alloted_slot],another_request_time:params[:client][:another_request_time])
+              else
+                raise "Already booked please select another time"
+              end    
+            else
+              @client.update(confirm_time:params[:client][:confirm_time],confirm_date:params[:client][:confirm_date],alloted_slot:params[:client][:alloted_slot],another_request_time:params[:client][:another_request_time])
+            end    
           else
             @client.update(confirm_time:params[:client][:confirm_time],confirm_date:params[:client][:confirm_date],alloted_slot:params[:client][:alloted_slot],another_request_time:params[:client][:another_request_time])
           end              

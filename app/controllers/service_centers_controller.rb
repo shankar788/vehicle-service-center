@@ -2,6 +2,7 @@
 class ServiceCentersController < ApplicationController
   load_and_authorize_resource except: %i[index client_request your_profile client_profile order_confirmation charge payment create] 
   before_action :authenticate_user!, except: %i[index]
+  before_action :set_values, only: %i[client_request]
   include Vehicle
   
 
@@ -87,22 +88,7 @@ class ServiceCentersController < ApplicationController
   def show
     @request_id = ServiceCenter.find(params[:id])
     begin 
-      year = params[:request_date][2,2].to_i
-      year1 = Time.now.strftime("%y").to_i
-      y = year
-      y1 = year1+1
-      m = params[:request_date].split("-")[1].to_i
-      m1 = Time.now.strftime("%m").to_i
-      if year == year1
-        if m>=m1
-          Shop::OrderService.new().request(params,current_user.id)
-        else
-          flash[:e] = "invalid date"
-          redirect_to client_request_path(@request_id)
-        end    
-      else
-        raise "Please fill valid date"
-      end    
+      Shop::OrderService.new().request(params,current_user.id)  
     rescue => e
       flash[:error] = e
       redirect_to client_request_path(@request_id)
@@ -127,10 +113,6 @@ class ServiceCentersController < ApplicationController
   end
 
   def client_request 
-    @request_id = ServiceCenter.find(params[:id])
-    @a = @request_id.service_types.pluck(:name)
-    @time = Client.where(service_center_id:@request_id)
-    @slots  = Slot.where(service_center_id:params[:id])
   end
   
   
@@ -147,6 +129,14 @@ class ServiceCentersController < ApplicationController
   private
   def service_params
     params.require(:service_center).permit(:shop_name, :shop_owner, :location, :address,:image)
+  end
+
+
+  def set_values
+    @request_id = ServiceCenter.find(params[:id])
+    @a = @request_id.service_types.pluck(:name)
+    @time = Client.where(service_center_id:@request_id)
+    @slots  = Slot.where(service_center_id:params[:id])
   end
 end
 
