@@ -20,6 +20,7 @@
                 <th>edit</th>
                 <th>Destroy</th>
                 <th>Slot</th>
+                <th>Client</th>
             </tr>
             </thead>
             <tbody>
@@ -31,9 +32,10 @@
                 <td class="text-dark"> <%= i.location%> </td>
                 <td class="text-dark"><%= i.address%></td>
                 <td><%=link_to "show",show_data_service_center_path(i.id),class:"btn btn-danger"%> </td>
-                <td>        <%=link_to "edit",edit_service_center_path(i.id),class:"btn btn-danger"%> </td>
-                <td>       <%= link_to "Destroy", service_center_path(i.id), data: { turbo_method: :delete,turbo_confirm: "Are you sure?"},class:"btn btn-danger" %></td>
+                <td><%=link_to "edit",edit_service_center_path(i.id),class:"btn btn-danger"%> </td>
+                <td><%= link_to "Destroy", service_center_path(i.id), data: { turbo_method: :delete,turbo_confirm: "Are you sure?"},class:"btn btn-danger" %></td>
                 <td> <%=link_to "Slot",slot_path(i.id),class:"btn btn-danger"%> </td>
+                <td>Client</td>
             </tr>
             <%end%>
            

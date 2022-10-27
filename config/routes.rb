@@ -38,13 +38,20 @@ Rails.application.routes.draw do
   resources :clients do
     collection do  
       get "user_profile",to: 'clients#user_profile'
-      get "admin_path" ,to: "clients#admin"
+      get "admin" ,to: "clients#admin"
+      get "all_client" ,to: "clients#all_client"  
+      get "new_client" ,to: "clients#new_client"
+      get "edit_client" ,to: "clients#edit_client"
+      get "create_client" ,to: "clients#create_client"
+      
     end    
     member do 
       get "show_data", to: "clients#show_data"
       get "update_slot", to: "clients#update_slot"
       get "bill_detail", to: "clients#bill_detail"
       get 'revenue',to: "clients#revenue"
+      get "delete_client" ,to: "clients#delete_client"
+      get "update_client" ,to: "clients#update_client"
     end  
 
   end

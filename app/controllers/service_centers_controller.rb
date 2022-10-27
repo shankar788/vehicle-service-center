@@ -1,6 +1,6 @@
 
 class ServiceCentersController < ApplicationController
-  load_and_authorize_resource except: %i[index client_request your_profile client_profile order_confirmation charge payment create] 
+  load_and_authorize_resource except: %i[index client_request your_profile client_profile order_confirmation charge payment create show]
   before_action :authenticate_user!, except: %i[index]
   before_action :set_values, only: %i[client_request]
   include Vehicle
@@ -54,7 +54,6 @@ class ServiceCentersController < ApplicationController
 
   def order_confirmation
     authorize! :update, ServiceCenter
-    
     Shop::OrderService.new().order_confirmation(params)
   end  
 
@@ -90,6 +89,7 @@ class ServiceCentersController < ApplicationController
     begin 
       Shop::OrderService.new().request(params,current_user.id)  
     rescue => e
+      debugger
       flash[:error] = e
       redirect_to client_request_path(@request_id)
     end    

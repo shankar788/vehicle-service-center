@@ -8,12 +8,16 @@ class Ability
       if user.user_rule == "admin"  
         can :manage ,:all
       elsif user.user_rule == "shop owner" 
-        can :manage, :all, user_id:user.id  
+        # can :manage, :all, user_id:user.id  
+        can :manage ,:all, user: user
       elsif user.user_rule == "client" 
-        can :read, :all
+        # can :read,:all, user_id: user.id
+        can :read, Client, user_id: user.id
+        # cannot :create, Client, user_id: user.id
+
         # can :create, ServiceCenter
-        # can :method , Model or table name
-      end
+        # can :method , Model or table name 
+      end 
     end   
 
       # can :manage, :all if user.user_rule == 'admin' || can :manage, :all, user_id:user.id

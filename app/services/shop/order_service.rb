@@ -11,11 +11,11 @@ module Shop
             if @client.next_date[0,2].to_i >= Time.now.strftime("%d").to_i && @client.next_date[2,3].strip.to_i >= Time.now.strftime("%m").to_i && @client.next_date[5,7].to_i >= Time.now.strftime("%y").to_i
               @request_id.clients.create(name:params[:name],vehicle_number:params[:vehicle_number],contact_number:params[:contact_number],user_id:id,category:@cat.name,cost:@cat.cost,request_time:params[:request_time],request_date:params[:request_date],category_time:@cat.time)
             else
-              flash[:invalid] = "Your vehicle already and Apply after #{@client.next_date}"
+              raise "Your vehicle already serviced and Apply after #{@client.next_date}"
               redirect_to client_request_path(@client.service_center_id)
             end  
           elsif true
-            @request_id.clients.create!(name:params[:name],vehicle_number:params[:vehicle_number],contact_number:params[:contact_number],user_id:id,category:@cat.name,cost:@cat.cost,request_time:params[:request_time].upcase,request_date:params[:request_date],category_time:@cat.time)
+            @request_id.clients.create!(name:params[:name],vehicle_number:params[:vehicle_number],contact_number:params[:contact_number],user_id:id,category:@cat.name,cost:@cat.cost,request_time:params[:request_time].upcase,request_date:params[:request_date].split("-").reverse.join("-"),category_time:@cat.time)
           end  
      
         end  
@@ -29,7 +29,7 @@ module Shop
           if @slots
             @slots.update(status:"booked")
             @user = User.find_by(id:@data.user_id)
-            @data.update(confirm_date:Time.now.strftime("%d %m %y"),confirm_time:Time.now.strftime("%T"))
+            @data.update(confirm_date:Time.now.strftime("%d-%m-%y"),confirm_time:Time.now.strftime("%T"))
             if @data.category == "car washing" || @data.category == "bike washing"
               @data.update(next_date:nil,status:"booked",confirm_slot:@slots.name)
               UserMailer.with(email: @user.email).order_mail.deliver_later
@@ -67,7 +67,7 @@ module Shop
          
         def next_service(date,client)
           month = date[3,3].to_i
-          year = date[5,7].to_i
+          year = date[6,7].to_i
           date = date[0,2].to_i
           sum = month+3
           if sum<=12

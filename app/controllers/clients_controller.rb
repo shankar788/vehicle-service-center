@@ -1,6 +1,7 @@
 class ClientsController < ApplicationController
     before_action :authenticate_user!
     include Vehicle
+    # load_and_authorize_resource except: %i[user_profile]
     def index
     end     
 
@@ -19,6 +20,9 @@ class ClientsController < ApplicationController
     end
     def show
         @client = client_info(params[:id])
+        @cl = Client.where(user_id: params[:id]).first
+
+        raise CanCan::AccessDenied if Client.where(user_id: @cl.user_id).accessible_by(current_ability).empty?
     end
 
     
@@ -50,12 +54,13 @@ class ClientsController < ApplicationController
     end
 
     def user_profile
+    
         if current_user.user_rule == "shop owner" 
             @shop_owner = shop_info(current_user.id)
         elsif current_user.user_rule =="client"
             redirect_to client_path(current_user.id)
         else
-            redirect_to admin_path_clients_path
+            redirect_to admin_clients_path
         end            
     end    
 
@@ -65,6 +70,26 @@ class ClientsController < ApplicationController
         @shop.each do |i|
             @total = @total+i.amount
         end    
+    end    
+
+    def all_client
+        @all = Client.all
+    end 
+
+    def new_client
+
+    end
+
+    def edit_client
+    end    
+
+    def create_client
+    end    
+
+    def delete_client
+    end    
+
+    def update_client
     end    
 
 
